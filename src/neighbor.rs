@@ -1,10 +1,8 @@
 use crate::file::Neighbors;
-use std::cmp::Reverse;
 use std::collections::HashSet;
-use std::collections::VecDeque;
 use std::error::Error;
 use std::fs::File;
-use std::io::BufReader;
+use std::io::{BufRead, BufReader};
 
 /*
  Gaurav Sablok
@@ -15,14 +13,14 @@ impl Neighbors {
     pub fn genomematch(&self) -> Result<Vec<HashSet<Vec<u8>>>, Box<dyn Error>> {
         let mut valuereturn: Vec<HashSet<Vec<u8>>> = Vec::new();
         let pathfile = Neighbors {
-            neighboursfile: self.neighboursfile,
-            valuefile: self.valuefile,
+            neighboursfile: self.neighboursfile.clone(),
+            valuefile: self.valuefile.clone(),
         };
         let filevalue = pathfile.neighboursfile;
         let filevalue_extract: usize = pathfile.valuefile.parse::<usize>().unwrap();
         let fileopen = File::open(filevalue).expect("file not present");
         let fileread = BufReader::new(fileopen);
-        let vector_string: Vec<&[u8]> = Vec::new();
+        let mut vector_string: Vec<&[u8]> = Vec::new();
         for i in fileread.lines() {
             let line = i.expect("file not present");
             let lineslice = b"line";
@@ -33,6 +31,7 @@ impl Neighbors {
             let valuekmer = neighbors(valueinsert, filevalue_extract);
             valuereturn.push(valuekmer);
         }
+        Ok(valuereturn)
     }
 }
 

@@ -1,10 +1,10 @@
 mod args;
 use crate::args::CommandParse;
 use crate::args::Commands;
-use crate::xgboost::xgb;
 use clap::Parser;
 use figlet_rs::FIGfont;
 mod allkmers;
+mod distance;
 mod edit;
 mod file;
 mod ham;

@@ -11,7 +11,7 @@ codeprog@icloud.com
 impl IterativeFasta {
     pub fn iterativeslide(&self) -> Result<Vec<Vec<usize>>, Box<dyn Error>> {
         let filepathuncover = IterativeFasta {
-            fastafile: self.fastafile,
+            fastafile: self.fastafile.clone(),
             kmer: self.kmer,
         };
         let filepath = filepathuncover.fastafile;
@@ -34,26 +34,26 @@ impl IterativeFasta {
         let slidevec: Vec<Vec<&str>> = Vec::new();
         for i in vecstring.iter() {
             let stringlen = i.clone();
-            let mut stringvec: Vec<&str> = Vec::new();
+            let mut stringvec: Vec<String> = Vec::new();
             for i in 0..stringlen.len() {
-                let firstiter = stringlen[i..kmer];
-                let seconditer = stringlen[i + 1..kmer + 1usize];
+                let firstiter = stringlen[i..kmer].to_string();
+                let seconditer = stringlen[i + 1..kmer + 1usize].to_string();
                 stringvec.push(firstiter);
                 stringvec.push(seconditer);
             }
         }
 
-        let distance = editdistrance(stringvec).unwrap();
+        let distance = editdistrance(slidevec).unwrap();
         Ok(distance)
     }
 }
 
-pub fn editdistrance(inputvec: Vec<Vec<&str>>) -> Result<Vec<usize>, Box<dyn Error>> {
+pub fn editdistrance(inputvec: Vec<Vec<&str>>) -> Result<Vec<Vec<usize>>, Box<dyn Error>> {
     let vecinput = inputvec.clone();
-    let editdistance: Vec<Vec<usize>> = Vec::new();
+    let mut editdistance: Vec<Vec<usize>> = Vec::new();
     for i in vecinput.iter() {
         let vecclone = i.clone();
-        let vecusize: Vec<usize> = Vec::new();
+        let mut vecusize: Vec<usize> = Vec::new();
         for i in 0..vecclone.len() - 1 {
             let veca = vecclone[i].chars().collect::<Vec<_>>();
             let vecb = vecclone[i + 1].chars().collect::<Vec<_>>();
@@ -68,7 +68,8 @@ pub fn editdistrance(inputvec: Vec<Vec<&str>>) -> Result<Vec<usize>, Box<dyn Err
                     }
                 }
             }
-            editdistance.push(vecusize);
+            editdistance.push(vecusize.clone());
         }
     }
+    Ok(editdistance)
 }

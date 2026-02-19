@@ -1,7 +1,6 @@
 #[derive(Debug, Clone, PartialOrd, PartialEq)]
 pub struct Fasta {
     pub fastafile: String,
-    pub kmer: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialOrd, PartialEq)]
@@ -29,4 +28,9 @@ pub struct MachineMinimizers {
 pub struct IterativeFasta {
     pub fastafile: String,
     pub kmer: usize,
+}
+
+#[derive(Debug, Clone, PartialEq, PartialOrd)]
+pub struct Filereadpath {
+    pub filereadpath: String,
 }

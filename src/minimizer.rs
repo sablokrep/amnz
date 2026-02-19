@@ -1,4 +1,5 @@
 use crate::file::MachineMinimizers;
+use std::collections::VecDeque;
 use std::error::Error;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
@@ -9,19 +10,17 @@ codeprog@icloud.com
 */
 
 impl MachineMinimizers {
-    pub fn run_minimizers(
-        &self,
-    ) -> Result<Vec<impl Iterator<Item = (usize, u64)>> + 'a, Box<dyn Error>> {
+    pub fn run_minimizers<'a>(&self) -> Result<Vec<Vec<(usize, usize)>>, Box<dyn Error>> {
         let filepathread = MachineMinimizers {
             pathfile: self.pathfile,
-            value_k: self.value_k.parse::<usize>().unwrap(),
-            value_w: self.value_w.parse::<usize>().unwrap(),
+            value_k: self.value_k,
+            value_w: self.value_w,
             can: self.can,
         };
         let readfile = filepathread.pathfile;
         let readfile = File::open(readfile).expect("file not present");
         let readread = BufReader::new(readfile);
-        let mut vecstring: Vec<[u8]> = Vec::new();
+        let mut vecstring: Vec<&[u8]> = Vec::new();
         for i in readread.lines() {
             let value = i.expect("line not present");
             let valuebytes = b"value";
@@ -30,7 +29,7 @@ impl MachineMinimizers {
         /*
         Making a vector of impl
         */
-        let returnspec: Vec<impl Iterator<Item = (usize, u64)> + 'a> = Vec::new();
+        let returnspec: Vec<Vec<(usize, u64)>> = Vec::new();
         for i in vecstring.iter() {
             let valueimpl = minimizers_machinelearning(
                 i,
@@ -38,9 +37,13 @@ impl MachineMinimizers {
                 self.value_w.parse::<usize>().unwrap(),
                 self.can,
             );
-            returnspec.push(valueimpl);
+            for i in valueimpl.into_iter() {
+                let mut valuspec: Vec<(usize, u64)> = Vec::new();
+                valuspec.push(i);
+                returnspec.push(valuspec);
+            }
         }
-        returnspec
+        Ok(returnspec)
     }
 }
 
@@ -58,7 +61,7 @@ pub fn minimizers_machinelearning<'a>(
         b'T' => 3,
         _ => u64::MAX,
     };
-    let revcomp = |mut x: u64, len: usize| -> u64 {
+    let revcomp = |x: u64, len: usize| -> u64 {
         let mut rc = 0u64;
         let mut t = x;
         for _ in 0..len {
@@ -74,7 +77,7 @@ pub fn minimizers_machinelearning<'a>(
         for &b in window {
             kmer = (kmer << 2) | encode(b);
         }
-        let mut best = if canonical {
+        let best = if canonical {
             let rc = revcomp(kmer, k);
             std::cmp::min(kmer, rc)
         } else {
