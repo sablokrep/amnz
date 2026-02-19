@@ -5,6 +5,7 @@ use crate::xgboost::xgb;
 use clap::Parser;
 use figlet_rs::FIGfont;
 mod allkmers;
+mod edit;
 mod file;
 mod ham;
 mod jump;

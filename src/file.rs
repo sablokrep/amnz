@@ -24,3 +24,9 @@ pub struct MachineMinimizers {
     pub value_w: String,
     pub can: bool,
 }
+
+#[derive(Debug, Clone, PartialOrd, PartialEq)]
+pub struct IterativeFasta {
+    pub fastafile: String,
+    pub kmer: usize,
+}
